@@ -140,6 +140,48 @@ class Auth_Provider with ChangeNotifier {
 
       // List<dynamic> values = new List<dynamic>();
       // values = json.decode(response.body);
+      //print('${map['userdata']}');
+      appointlist = map['userdata'];
+    }
+
+    return appointlist;
+  }
+
+  Future<int> cancelAppointment(String request_OID) async {
+    //List<dynamic> appointlist;
+    print(request_OID);
+    final response = await http.post(
+        Uri.parse("http://104.236.229.139:6000/user/cancelappointments"),
+        headers: {
+          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+        body: {
+          'request_OID': request_OID,
+        });
+
+    print(response.statusCode);
+
+    return response.statusCode;
+  }
+
+  Future<List<dynamic>> getAppointment(String postedByGUID) async {
+    List<dynamic> appointlist;
+    final response = await http.post(
+        Uri.parse("http://104.236.229.139:6000/user/appointments"),
+        headers: {
+          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+        body: {
+          'postedBy_GUID': postedByGUID,
+        });
+
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+
+      // List<dynamic> values = new List<dynamic>();
+      // values = json.decode(response.body);
       print('${map['userdata']}');
       appointlist = map['userdata'];
     }
@@ -147,10 +189,10 @@ class Auth_Provider with ChangeNotifier {
     return appointlist;
   }
 
-  Future<List<dynamic>> getAppointment(String postedByGUID) async {
+  Future<List<dynamic>> getCancelledAppointment(String postedByGUID) async {
     List<dynamic> appointlist;
     final response = await http.post(
-        Uri.parse("http://104.236.229.139:6000/user/appointments"),
+        Uri.parse("http://104.236.229.139:6000/user/cancelledappointments"),
         headers: {
           "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
         },
@@ -165,7 +207,7 @@ class Auth_Provider with ChangeNotifier {
 
       // List<dynamic> values = new List<dynamic>();
       // values = json.decode(response.body);
-      print('${map['userdata']}');
+      //print('${map['userdata']}');
       appointlist = map['userdata'];
     }
 

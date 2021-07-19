@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'package:lifespan/pages/screens.dart';
-import 'package:lifespan/constant/constant.dart';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lifespan/constant/constant.dart';
+import 'package:lifespan/pages/screens.dart';
 
 class BottomBar extends StatefulWidget {
   @override
@@ -32,8 +33,8 @@ class _BottomBarState extends State<BottomBar> {
             children: [
               getBottomBarItemTile(0, Icons.home),
               getBottomBarItemTile(1, Icons.date_range),
-              getBottomBarItemTile(2, Icons.message),
-              getBottomBarItemTile(3, Icons.person),
+              //getBottomBarItemTile(2, Icons.message),
+              getBottomBarItemTile(2, Icons.person),
             ],
           ),
         ),
@@ -43,7 +44,7 @@ class _BottomBarState extends State<BottomBar> {
             ? Home()
             : (currentIndex == 1)
                 ? Appointment()
-                : (currentIndex == 2) ? ChatList() : Profile(),
+                : Profile(),
         onWillPop: () async {
           bool backStatus = onWillPop();
           if (backStatus) {

@@ -15,6 +15,8 @@ class _AppointmentState extends State<Appointment> {
   SharedPreferences prefs;
   List<dynamic> activeAppoinmentList = [];
   List<dynamic> pastAppoinmentList = [];
+  List<dynamic> cancelledAppoinmentList = [];
+
   _AppointmentState() {
     activeAppointments().then((val) => setState(() {
           activeAppoinmentList = val;
@@ -22,7 +24,11 @@ class _AppointmentState extends State<Appointment> {
     pastAppointments().then((val) => setState(() {
           pastAppoinmentList = val;
         }));
+    getCancelled().then((val) => setState(() {
+          cancelledAppoinmentList = val;
+        }));
   }
+
   Future<List<dynamic>> activeAppointments() async {
     prefs = await SharedPreferences.getInstance();
     return authProvider.getAppointment(prefs.getString("oid"));
@@ -31,6 +37,11 @@ class _AppointmentState extends State<Appointment> {
   Future<List<dynamic>> pastAppointments() async {
     prefs = await SharedPreferences.getInstance();
     return authProvider.getPastAppointment(prefs.getString("oid"));
+  }
+
+  Future<List<dynamic>> getCancelled() async {
+    prefs = await SharedPreferences.getInstance();
+    return authProvider.getCancelledAppointment(prefs.getString("oid"));
   }
 
   // [
@@ -69,14 +80,14 @@ class _AppointmentState extends State<Appointment> {
   //   }
   // ];
 
-  final cancelledAppoinmentList = [
-    {
-      'doctorName': 'Manzini Branch',
-      'date': '02 May 2021',
-      'time': '10:30 AM',
-      'doctorType': 'Chemistry',
-    }
-  ];
+  // final cancelledAppoinmentList = [
+  //   {
+  //     'doctorName': 'Manzini Branch',
+  //     'date': '02 May 2021',
+  //     'time': '10:30 AM',
+  //     'doctorType': 'Chemistry',
+  //   }
+  // ];
 
   deleteAppointmentDialog(index) {
     showDialog(
@@ -126,11 +137,16 @@ class _AppointmentState extends State<Appointment> {
                           ),
                         ),
                         InkWell(
-                          onTap: () {
-                            setState(() {
-                              activeAppoinmentList.removeAt(index);
-                            });
-                            Navigator.pop(context);
+                          onTap: () async {
+                            if (await authProvider.cancelAppointment(
+                                    activeAppoinmentList[index]
+                                        ["requestOID"]) ==
+                                200) {
+                              setState(() {
+                                activeAppoinmentList.removeAt(index);
+                              });
+                              Navigator.pop(context);
+                            }
                           },
                           child: Container(
                             width: (MediaQuery.of(context).size.width / 3.5),
@@ -458,7 +474,7 @@ class _AppointmentState extends State<Appointment> {
                             color: Colors.red[50],
                           ),
                           child: Text(
-                            item['date'],
+                            item['appointDate_dat'],
                             textAlign: TextAlign.center,
                             style: redColorNormalTextStyle,
                           ),
@@ -470,18 +486,18 @@ class _AppointmentState extends State<Appointment> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                item['time'],
+                                item['appointTime_tm'],
                                 style: blackHeadingTextStyle,
                               ),
                               SizedBox(height: 7.0),
                               Text(
-                                '${item['doctorName']}',
+                                '${item['systemBranch_str']}',
                                 style: blackNormalTextStyle,
                                 overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(height: 7.0),
                               Text(
-                                '${item['doctorType']}',
+                                '${item['clientFirstname_str']} ${item['clientLastname_str']}',
                                 style: primaryColorsmallTextStyle,
                                 overflow: TextOverflow.ellipsis,
                               ),
