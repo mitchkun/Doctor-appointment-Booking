@@ -1,4 +1,4 @@
-# doctor_pro
+# Medical Labs Booking App
 
 A new Flutter project.
 
