@@ -8,12 +8,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Payment extends StatefulWidget {
   final double cost;
-  final String doctorName,time, date, clientFirstname_str,clientLastname_str;
-
+  final String doctorName, time, date, clientFirstname_str, clientLastname_str;
 
   const Payment(
       {Key key,
-        @required this.cost, this.doctorName, this.time, this.date, this.clientFirstname_str, this.clientLastname_str})
+      @required this.cost,
+      this.doctorName,
+      this.time,
+      this.date,
+      this.clientFirstname_str,
+      this.clientLastname_str})
       : super(key: key);
   @override
   _PaymentState createState() => _PaymentState();
@@ -27,60 +31,23 @@ class _PaymentState extends State<Payment> {
       cashOn = false;
   Auth_Provider authProvider;
 
-  successOrderDialog(String systemBranchStr,
+  successOrderDialog(
+      String systemBranchStr,
       String appointDateDat,
       String appointTimeTm,
       String clientLastnameStr,
       String clientFirstnameStr) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print("$systemBranchStr $appointDateDat $appointTimeTm $clientLastnameStr $clientFirstnameStr");
-    if ( await authProvider.setAppointment(systemBranchStr, appointDateDat, appointTimeTm, clientLastnameStr, clientFirstnameStr, prefs.getString('oid')) == 201){
-    showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-    // return object of type Dialog
-    return Dialog(
-    elevation: 0.0,
-    shape:
-    RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-    child: Container(
-    height: 170.0,
-    padding: EdgeInsets.all(20.0),
-    child: Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: <Widget>[
-    Container(
-    height: 70.0,
-    width: 70.0,
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(35.0),
-    border: Border.all(color: primaryColor, width: 1.0),
-    ),
-    child: Icon(
-    Icons.check,
-    size: 40.0,
-    color: primaryColor,
-    ),
-    ),
-    SizedBox(
-    height: 20.0,
-    ),
-    Text(
-    "Success!",
-    style: greySmallBoldTextStyle,
-    textAlign: TextAlign.center,
-    ),
-    ],
-    ),
-    ),
-    );
-    },
-    );
-    }
-    else {
+    print(
+        "$systemBranchStr $appointDateDat $appointTimeTm $clientLastnameStr $clientFirstnameStr");
+    if (await authProvider.setAppointment(
+            systemBranchStr,
+            appointDateDat,
+            appointTimeTm,
+            clientLastnameStr,
+            clientFirstnameStr,
+            prefs.getString('oid')) ==
+        201) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -88,8 +55,53 @@ class _PaymentState extends State<Payment> {
           // return object of type Dialog
           return Dialog(
             elevation: 0.0,
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            child: Container(
+              height: 170.0,
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    height: 70.0,
+                    width: 70.0,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(35.0),
+                      border: Border.all(color: primaryColor, width: 1.0),
+                    ),
+                    child: Icon(
+                      Icons.check,
+                      size: 40.0,
+                      color: primaryColor,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Text(
+                    "Success!",
+                    style: greySmallBoldTextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return Dialog(
+            elevation: 0.0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
             child: Container(
               height: 170.0,
               padding: EdgeInsets.all(20.0),
@@ -139,7 +151,7 @@ class _PaymentState extends State<Payment> {
 
   @override
   Widget build(BuildContext context) {
-    authProvider = Provider.of(context,listen: false);
+    authProvider = Provider.of(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
@@ -160,7 +172,8 @@ class _PaymentState extends State<Payment> {
           child: InkWell(
             borderRadius: BorderRadius.circular(15.0),
             onTap: () {
-              successOrderDialog(widget.doctorName,widget.date,widget.time,widget.clientLastname_str,widget.clientFirstname_str);
+              successOrderDialog(widget.doctorName, widget.date, widget.time,
+                  widget.clientLastname_str, widget.clientFirstname_str);
             },
             child: Container(
               width: double.infinity,
@@ -194,13 +207,12 @@ class _PaymentState extends State<Payment> {
           Expanded(
             child: ListView(
               children: [
-                getPaymentTile(
-                    'Pay on Visit', 'assets/payment_icon/cash_on_delivery.png'),
-                getPaymentTile(
-                    'Amazon Pay', 'assets/payment_icon/amazon_pay.png'),
+                getPaymentTile('Cash on Visit',
+                    'assets/payment_icon/cash_on_delivery.png'),
+                getPaymentTile('MoMo Pay', 'assets/payment_icon/momopay.png'),
                 getPaymentTile('Card', 'assets/payment_icon/card.png'),
-                getPaymentTile('PayPal', 'assets/payment_icon/paypal.png'),
-                getPaymentTile('Skrill', 'assets/payment_icon/skrill.png'),
+                // getPaymentTile('PayPal', 'assets/payment_icon/paypal.png'),
+                // getPaymentTile('Skrill', 'assets/payment_icon/skrill.png'),
                 Container(height: fixPadding * 2.0),
               ],
             ),
@@ -213,7 +225,7 @@ class _PaymentState extends State<Payment> {
   getPaymentTile(String title, String imgPath) {
     return InkWell(
       onTap: () {
-        if (title == 'Pay on Visit') {
+        if (title == 'Cash on Visit') {
           setState(() {
             cashOn = true;
             amazon = false;
@@ -221,7 +233,7 @@ class _PaymentState extends State<Payment> {
             paypal = false;
             skrill = false;
           });
-        } else if (title == 'Amazon Pay') {
+        } else if (title == 'MoMo Pay') {
           setState(() {
             cashOn = false;
             amazon = true;
@@ -265,15 +277,25 @@ class _PaymentState extends State<Payment> {
           borderRadius: BorderRadius.circular(7.0),
           border: Border.all(
             width: 1.0,
-            color: (title == 'Pay on Visit')
-                ? (cashOn) ? primaryColor : Colors.grey[300]
-                : (title == 'Amazon Pay')
-                    ? (amazon) ? primaryColor : Colors.grey[300]
+            color: (title == 'Cash on Visit')
+                ? (cashOn)
+                    ? primaryColor
+                    : Colors.grey[300]
+                : (title == 'MoMo Pay')
+                    ? (amazon)
+                        ? primaryColor
+                        : Colors.grey[300]
                     : (title == 'Card')
-                        ? (card) ? primaryColor : Colors.grey[300]
+                        ? (card)
+                            ? primaryColor
+                            : Colors.grey[300]
                         : (title == 'PayPal')
-                            ? (paypal) ? primaryColor : Colors.grey[300]
-                            : (skrill) ? primaryColor : Colors.grey[300],
+                            ? (paypal)
+                                ? primaryColor
+                                : Colors.grey[300]
+                            : (skrill)
+                                ? primaryColor
+                                : Colors.grey[300],
           ),
           color: whiteColor,
         ),
@@ -302,15 +324,25 @@ class _PaymentState extends State<Payment> {
                 borderRadius: BorderRadius.circular(10.0),
                 border: Border.all(
                   width: 1.5,
-                  color: (title == 'Pay on Visit')
-                      ? (cashOn) ? primaryColor : Colors.grey[300]
-                      : (title == 'Amazon Pay')
-                          ? (amazon) ? primaryColor : Colors.grey[300]
+                  color: (title == 'Cash on Visit')
+                      ? (cashOn)
+                          ? primaryColor
+                          : Colors.grey[300]
+                      : (title == 'MoMo Pay')
+                          ? (amazon)
+                              ? primaryColor
+                              : Colors.grey[300]
                           : (title == 'Card')
-                              ? (card) ? primaryColor : Colors.grey[300]
+                              ? (card)
+                                  ? primaryColor
+                                  : Colors.grey[300]
                               : (title == 'PayPal')
-                                  ? (paypal) ? primaryColor : Colors.grey[300]
-                                  : (skrill) ? primaryColor : Colors.grey[300],
+                                  ? (paypal)
+                                      ? primaryColor
+                                      : Colors.grey[300]
+                                  : (skrill)
+                                      ? primaryColor
+                                      : Colors.grey[300],
                 ),
               ),
               child: Container(
@@ -319,14 +351,22 @@ class _PaymentState extends State<Payment> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5.0),
-                  color: (title == 'Pay on Visit')
-                      ? (cashOn) ? primaryColor : Colors.transparent
-                      : (title == 'Amazon Pay')
-                          ? (amazon) ? primaryColor : Colors.transparent
+                  color: (title == 'Cash on Visit')
+                      ? (cashOn)
+                          ? primaryColor
+                          : Colors.transparent
+                      : (title == 'MoMo Pay')
+                          ? (amazon)
+                              ? primaryColor
+                              : Colors.transparent
                           : (title == 'Card')
-                              ? (card) ? primaryColor : Colors.transparent
+                              ? (card)
+                                  ? primaryColor
+                                  : Colors.transparent
                               : (title == 'PayPal')
-                                  ? (paypal) ? primaryColor : Colors.transparent
+                                  ? (paypal)
+                                      ? primaryColor
+                                      : Colors.transparent
                                   : (skrill)
                                       ? primaryColor
                                       : Colors.transparent,

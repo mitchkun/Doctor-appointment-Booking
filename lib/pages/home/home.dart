@@ -3,6 +3,7 @@ import 'package:lifespan/pages/screens.dart';
 import 'package:lifespan/widget/column_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -13,43 +14,84 @@ class _HomeState extends State<Home> {
   String city = 'Mbabane';
 
   final doctorTypeList = [
-    {'type': 'SARS-CoV-2 Testing', 'image': 'assets/icons/patient.png'},
-    {'type': 'Diagnostic Samples', 'image': 'assets/icons/stethoscope.png'},
-    {'type': 'Chemistry', 'image': 'assets/icons/woman.png'},
-    {'type': 'Chemistry', 'image': 'assets/icons/pediatrician.png'},
-    {'type': 'Haematology', 'image': 'assets/icons/physiotherapist.png'},
-    {'type': 'Microbiology', 'image': 'assets/icons/nutritionist.png'},
-    {'type': 'Other', 'image': 'assets/icons/dentist.png'}
+    {
+      'type': 'SARS-CoV-2 Testing',
+      'image': 'assets/icons/patient.png',
+      'about':
+          'Covid 19 testing is now offered at Lifespan Diagnostics. We offer sample collection and testing with a turnaround time of 24hours.'
+    },
+    {
+      'type': 'Diagnostic Samples',
+      'image': 'assets/icons/stethoscope.png',
+      'about':
+          'Samples for diagnostic tests for SARS-CoV-2 can be taken from the upper (nasopharyngeal/oropharyngeal swabs, nasal aspirate, nasal wash or saliva) or lower respiratory tract (sputum or tracheal aspirate or bronchoalveolar lavage - BAL).'
+    },
+    {
+      'type': 'Chemistry',
+      'image': 'assets/icons/woman.png',
+      'about':
+          'A clinical chemist is a person who uses chemistry to evaluate patient health. Automation is changing laboratory and hospital operations'
+    },
+    {
+      'type': 'Chemistry',
+      'image': 'assets/icons/pediatrician.png',
+      'about': ''
+    },
+    {
+      'type': 'Haematology',
+      'image': 'assets/icons/physiotherapist.png',
+      'about':
+          'We have medicine doctors or pediatricians who have extra training in disorders related to your blood, bone marrow, and lymphatic system.'
+    },
+    {
+      'type': 'Microbiology',
+      'image': 'assets/icons/nutritionist.png',
+      'about': ''
+    },
+    {
+      'type': 'Other',
+      'image': 'assets/icons/dentist.png',
+      'about':
+          'A microbiologist is a scientist who studies microscopic life forms and processes. This includes study of the growth, interactions and characteristics of microscopic organisms such as bacteria, algae, fungi, and some types of parasites and their vectors.'
+    }
   ];
 
   final labList = [
     {
-      'name': 'Manzini Headquarters',
+      'name': 'Manzini Branch',
       'image': 'assets/lab/lab_1.jpg',
       'address': 'Shop #6, Philani Building, Plot 18, Ternbergen Street',
       'phone': '+268 76061872',
-      'lat': 40.7392475,
-      'lang': -73.9795667
+      'lat': 26.5082,
+      'lang': 31.3713
     },
     {
       'name': 'Mbabane Branch',
       'image': 'assets/lab/lab_2.jpg',
       'address': 'Office #202, Development House, Swazi Plaza, Mbabane',
       'phone': '+268 2404 1009',
-      'lat': 40.7760308,
-      'lang': -73.978491
-    },
-    {
-      'name': 'Nhlangano Branch',
-      'image': 'assets/lab/lab_3.jpg',
-      'address': 'Shop #2, Busy Street, Tea Rd, Nhlangano',
-      'phone': '+268 76061872',
-      'lat': 40.7446378,
-      'lang': -73.989919
+      'lat': 26.3054,
+      'lang': 31.1367
     }
   ];
   @override
   Widget build(BuildContext context) {
+    String _message;
+    DateTime now = DateTime.now();
+    String _currentHour = DateFormat('kk').format(now);
+    int hour = int.parse(_currentHour);
+
+    setState(
+      () {
+        if (hour >= 5 && hour < 12) {
+          _message = 'Good Morning';
+        } else if (hour >= 12 && hour <= 17) {
+          _message = 'Good Afternoon';
+        } else {
+          _message = 'Good Evening';
+        }
+      },
+    );
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -69,7 +111,7 @@ class _HomeState extends State<Home> {
               ),
               SizedBox(width: 5.0),
               Text(
-                city,
+                _message,
                 style: appBarLocationTextStyle,
               ),
             ],
@@ -196,12 +238,12 @@ class _HomeState extends State<Home> {
                   Navigator.push(
                     context,
                     PageTransition(
-                      duration: Duration(milliseconds: 800),
-                      type: PageTransitionType.fade,
-                      child: DoctorList(
-                        doctorType: item['type'],
-                      ),
-                    ),
+                        duration: Duration(milliseconds: 800),
+                        type: PageTransitionType.fade,
+                        child: DoctorList(
+                          doctorType: item['type'],
+                          about: item['about'],
+                        )),
                   );
                 },
                 child: Container(

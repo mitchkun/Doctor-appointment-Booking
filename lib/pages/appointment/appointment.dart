@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lifespan/constant/constant.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 import '../../provider/Auth_Provider.dart';
 
@@ -288,7 +289,8 @@ class _AppointmentState extends State<Appointment> {
                             color: Colors.green[50],
                           ),
                           child: Text(
-                            item['appointDate_dat'],
+                            DateFormat('EEE d MMM').format(
+                                DateTime.parse(item['appointDate_dat'])),
                             textAlign: TextAlign.center,
                             style: greenColorNormalTextStyle,
                           ),
@@ -305,9 +307,8 @@ class _AppointmentState extends State<Appointment> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    TimeOfDay.fromDateTime(DateTime.parse(
-                                            item['appointTime_tm']))
-                                        .toString(),
+                                    DateFormat('kk:mm').format(
+                                        DateTime.parse(item['appointTime_tm'])),
                                     style: blackHeadingTextStyle,
                                   ),
                                   InkWell(
@@ -389,7 +390,8 @@ class _AppointmentState extends State<Appointment> {
                             color: primaryColor.withOpacity(0.15),
                           ),
                           child: Text(
-                            item['appointDate_dat'],
+                            DateFormat('EEE d MMM').format(
+                                DateTime.parse(item['appointDate_dat'])),
                             textAlign: TextAlign.center,
                             style: primaryColorNormalTextStyle,
                           ),
@@ -401,7 +403,8 @@ class _AppointmentState extends State<Appointment> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                item['appointTime_tm'],
+                                DateFormat('kk:mm').format(
+                                    DateTime.parse(item['appointTime_tm'])),
                                 style: blackHeadingTextStyle,
                               ),
                               SizedBox(height: 7.0),
@@ -474,7 +477,8 @@ class _AppointmentState extends State<Appointment> {
                             color: Colors.red[50],
                           ),
                           child: Text(
-                            item['appointDate_dat'],
+                            DateFormat('EEE d MMM').format(
+                                DateTime.parse(item['appointDate_dat'])),
                             textAlign: TextAlign.center,
                             style: redColorNormalTextStyle,
                           ),
@@ -486,7 +490,8 @@ class _AppointmentState extends State<Appointment> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                item['appointTime_tm'],
+                                DateFormat('kk:mm').format(
+                                    DateTime.parse(item['appointTime_tm'])),
                                 style: blackHeadingTextStyle,
                               ),
                               SizedBox(height: 7.0),

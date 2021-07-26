@@ -9,6 +9,7 @@ class Auth_Provider with ChangeNotifier {
   String id;
   String email;
   String password;
+  static const url = "http://173.212.233.244:6000";
 
   String get getUserId => id;
 
@@ -24,8 +25,7 @@ class Auth_Provider with ChangeNotifier {
 
   Future<int> signupUser(
       String email, String password, String firstName, String lastName) async {
-    final response = await http
-        .post(Uri.parse("http://104.236.229.139:6000/user/signup"), headers: {
+    final response = await http.post(Uri.parse(url + "/user/signup"), headers: {
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     }, body: {
       'email_str': email,
@@ -95,24 +95,16 @@ class Auth_Provider with ChangeNotifier {
   }
 
   Future<int> signinUser(String email, String password) async {
-    final response = await http
-        .post(Uri.parse("http://104.236.229.139:6000/user/signin"), headers: {
+    final response = await http.post(Uri.parse(url + "/user/signin"), headers: {
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     }, body: {
       'email': email,
       'password': password,
     });
 
-    //print(response.body);
-
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
-
-      // List<dynamic> values = new List<dynamic>();
-      // values = json.decode(response.body);
-      print('${map['userdata']}');
       User newUser = User.fromJson(map);
-      print(newUser.firstname);
       setFirstName(newUser.firstname);
       setLastName(newUser.lastname);
       setOIDName(newUser.oid);
@@ -124,23 +116,16 @@ class Auth_Provider with ChangeNotifier {
 
   Future<List<dynamic>> getPastAppointment(String postedByGUID) async {
     List<dynamic> appointlist;
-    final response = await http.post(
-        Uri.parse("http://104.236.229.139:6000/user/pastappointments"),
-        headers: {
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
-        body: {
-          'postedBy_GUID': postedByGUID,
-        });
-
-    //print(response.body);
+    final response =
+        await http.post(Uri.parse(url + "/user/pastappointments"), headers: {
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    }, body: {
+      'postedBy_GUID': postedByGUID,
+    });
 
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
 
-      // List<dynamic> values = new List<dynamic>();
-      // values = json.decode(response.body);
-      //print('${map['userdata']}');
       appointlist = map['userdata'];
     }
 
@@ -148,41 +133,39 @@ class Auth_Provider with ChangeNotifier {
   }
 
   Future<int> cancelAppointment(String request_OID) async {
-    //List<dynamic> appointlist;
-    print(request_OID);
-    final response = await http.post(
-        Uri.parse("http://104.236.229.139:6000/user/cancelappointments"),
-        headers: {
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
-        body: {
-          'request_OID': request_OID,
-        });
+    final response =
+        await http.post(Uri.parse(url + "/user/cancelappointments"), headers: {
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    }, body: {
+      'request_OID': request_OID,
+    });
 
-    print(response.statusCode);
+    return response.statusCode;
+  }
+
+  Future<int> deletePatient(String OID, String deletedBY) async {
+    final response =
+        await http.post(Uri.parse(url + "/user/deletepatient"), headers: {
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    }, body: {
+      'OID': OID,
+      'deletedBy': deletedBY
+    });
 
     return response.statusCode;
   }
 
   Future<List<dynamic>> getAppointment(String postedByGUID) async {
     List<dynamic> appointlist;
-    final response = await http.post(
-        Uri.parse("http://104.236.229.139:6000/user/appointments"),
-        headers: {
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
-        body: {
-          'postedBy_GUID': postedByGUID,
-        });
-
-    print(response.statusCode);
+    final response =
+        await http.post(Uri.parse(url + "/user/appointments"), headers: {
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    }, body: {
+      'postedBy_GUID': postedByGUID,
+    });
 
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
-
-      // List<dynamic> values = new List<dynamic>();
-      // values = json.decode(response.body);
-      print('${map['userdata']}');
       appointlist = map['userdata'];
     }
 
@@ -191,23 +174,16 @@ class Auth_Provider with ChangeNotifier {
 
   Future<List<dynamic>> getCancelledAppointment(String postedByGUID) async {
     List<dynamic> appointlist;
-    final response = await http.post(
-        Uri.parse("http://104.236.229.139:6000/user/cancelledappointments"),
-        headers: {
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
-        body: {
-          'postedBy_GUID': postedByGUID,
-        });
-
-    //print(response.body);
+    final response = await http
+        .post(Uri.parse(url + "/user/cancelledappointments"), headers: {
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    }, body: {
+      'postedBy_GUID': postedByGUID,
+    });
 
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
 
-      // List<dynamic> values = new List<dynamic>();
-      // values = json.decode(response.body);
-      //print('${map['userdata']}');
       appointlist = map['userdata'];
     }
 
@@ -221,8 +197,8 @@ class Auth_Provider with ChangeNotifier {
       String clientLastnameStr,
       String clientFirstnameStr,
       String postedByGUID) async {
-    final response = await http
-        .post(Uri.parse("http://104.236.229.139:6000/user/booking"), headers: {
+    final response =
+        await http.post(Uri.parse(url + "/user/booking"), headers: {
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     }, body: {
       'branch': systemBranchStr,
@@ -233,8 +209,62 @@ class Auth_Provider with ChangeNotifier {
       'postedby_GUID': postedByGUID
     });
 
-    print(response.body);
+    return response.statusCode;
+  }
+
+  Future<int> addPatient(
+      String email,
+      String firstname,
+      String lastname,
+      String othername,
+      String phone,
+      String nationalid,
+      String passport,
+      String birthdate,
+      String gender,
+      String physical,
+      String postal,
+      String status,
+      String addedUser,
+      String postedByGUID) async {
+    final response =
+        await http.post(Uri.parse(url + "/user/addpatient"), headers: {
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    }, body: {
+      'email_str': email,
+      'otherName_str': othername,
+      'firstName_str': firstname,
+      'lastName_str': lastname,
+      'nationalIdNumber_str': nationalid,
+      'passportTravelNo_str': passport,
+      'phoneNumber_str': phone,
+      'birthDate_dat': birthdate,
+      'gender_str': gender,
+      'maritalStatus_str': status,
+      'addressResidential_str': physical,
+      'addressPostal_str': postal,
+      'addedUser_str': addedUser,
+      'postedby_GUID': postedByGUID
+    });
 
     return response.statusCode;
+  }
+
+  Future<List<dynamic>> getPatient(String postedByGUID) async {
+    List<dynamic> patientlist;
+    final response =
+        await http.post(Uri.parse(url + "/user/patients"), headers: {
+      "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+    }, body: {
+      'postedby_GUID': postedByGUID,
+    });
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> map = jsonDecode(response.body);
+
+      patientlist = map['userdata'];
+    }
+
+    return patientlist;
   }
 }

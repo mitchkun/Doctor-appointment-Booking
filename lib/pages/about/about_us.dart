@@ -62,6 +62,18 @@ class AboutUs extends StatelessWidget {
               textAlign: TextAlign.justify,
             ),
           ),
+          Padding(
+            padding: EdgeInsets.only(
+              top: fixPadding * 2.0,
+              right: fixPadding * 2.0,
+              left: fixPadding * 2.0,
+            ),
+            child: Text(
+              'Developed by Ntsiki Sikhondze and Mitchell Dube',
+              style: blackNormalTextStyle,
+              textAlign: TextAlign.justify,
+            ),
+          ),
         ],
       ),
     );

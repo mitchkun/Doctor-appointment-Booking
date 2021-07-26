@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:lifespan/constant/constant.dart';
 import 'package:lifespan/pages/screens.dart';
 import 'package:flutter/material.dart';
@@ -12,18 +10,22 @@ const labelDate = 'Date';
 const labelWeekDay = 'Week Day';
 
 class DoctorTimeSlot extends StatefulWidget {
-  final String doctorName, doctorImage, doctorType, experience;
+  final String doctorType, experience, name, address, image;
+  final phone, lat, lang;
   //final double cost;
 
-  const DoctorTimeSlot(
-      {Key key,
-      @required this.doctorName,
-      @required this.doctorImage,
-      @required this.doctorType,
-      @required this.experience,
-      //@required this.cost
-      })
-      : super(key: key);
+  const DoctorTimeSlot({
+    Key key,
+    @required this.doctorType,
+    @required this.experience,
+    @required this.name,
+    @required this.address,
+    @required this.phone,
+    @required this.image,
+    @required this.lat,
+    @required this.lang,
+    //@required this.cost
+  }) : super(key: key);
   @override
   _DoctorTimeSlotState createState() => _DoctorTimeSlotState();
 }
@@ -34,27 +36,19 @@ class _DoctorTimeSlotState extends State<DoctorTimeSlot> {
   String monthString;
   double cost = 850;
   final morningSlotList = [
-    {'time': '08:00'},
     {'time': '08:30'},
     {'time': '09:00'},
     {'time': '09:30'},
     {'time': '10:00'},
     {'time': '10:30'},
-    {'time': '11:00'},
-    {'time': '11:30'}
+    {'time': '11:00'}
   ];
 
   final afternoonSlotList = [
     {'time': '12:30'},
-    {'time': '13:00'},
     {'time': '13:30'},
-    {'time': '14:00'},
     {'time': '14:30'},
-    {'time': '15:00'},
     {'time': '15:30'},
-    {'time': '16:00'},
-    {'time': '16:30'},
-    {'time': '17:00'},
     {'time': '17:30'},
     {'time': '18:00'}
   ];
@@ -130,7 +124,7 @@ class _DoctorTimeSlotState extends State<DoctorTimeSlot> {
     if (month == 1) {
       monthString = 'January 2021';
     } else if (month == 2) {
-      monthString = 'Fabruary 2021';
+      monthString = 'February 2021';
     } else if (month == 3) {
       monthString = 'March 2021';
     } else if (month == 4) {
@@ -199,10 +193,10 @@ class _DoctorTimeSlotState extends State<DoctorTimeSlot> {
                             type: PageTransitionType.rightToLeft,
                             duration: Duration(milliseconds: 600),
                             child: ConsultationDetail(
-                              doctorName: widget.doctorName,
+                              name: widget.name,
                               doctorType: widget.doctorType,
                               doctorExp: widget.experience,
-                              doctorImage: widget.doctorImage,
+                              image: widget.image,
                               date: selectedDate,
                               time: selectedTime,
                               cost: cost,
@@ -244,7 +238,7 @@ class _DoctorTimeSlotState extends State<DoctorTimeSlot> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Hero(
-                          tag: widget.doctorImage,
+                          tag: widget.image,
                           child: Container(
                             width: 76.0,
                             height: 76.0,
@@ -261,7 +255,7 @@ class _DoctorTimeSlotState extends State<DoctorTimeSlot> {
                                 ),
                               ],
                               image: DecorationImage(
-                                image: AssetImage(widget.doctorImage),
+                                image: AssetImage(widget.image),
                                 fit: BoxFit.fitHeight,
                               ),
                             ),
@@ -277,7 +271,7 @@ class _DoctorTimeSlotState extends State<DoctorTimeSlot> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      ' ${widget.doctorName}',
+                                      ' ${widget.name}',
                                       style: blackNormalBoldTextStyle,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -292,16 +286,7 @@ class _DoctorTimeSlotState extends State<DoctorTimeSlot> {
                                                   duration: Duration(
                                                       milliseconds: 600),
                                                   type: PageTransitionType.fade,
-                                                  child: DoctorProfile(
-                                                    doctorImage:
-                                                        widget.doctorImage,
-                                                    doctorName:
-                                                        widget.doctorName,
-                                                    doctorType:
-                                                        widget.doctorType,
-                                                    experience:
-                                                        widget.experience,
-                                                  )));
+                                                  child: LabList()));
                                         },
                                         child: Text(
                                           'View Profile',

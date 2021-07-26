@@ -5,15 +5,12 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../provider/Auth_Provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatefulWidget {
-
   @override
   _ProfileState createState() => _ProfileState();
-
 }
-
-
 
 class _ProfileState extends State<Profile> {
   SharedPreferences prefs;
@@ -21,14 +18,13 @@ class _ProfileState extends State<Profile> {
   String username = 'Ellis ';
   String lastname = 'Perry';
 
-  _ProfileState()  {
-
+  _ProfileState() {
     initial().then((val) => setState(() {
-      username = val;
-    }));
+          username = val;
+        }));
     last().then((val) => setState(() {
-      lastname = val;
-    }));
+          lastname = val;
+        }));
   }
 
   @override
@@ -42,13 +38,24 @@ class _ProfileState extends State<Profile> {
     prefs = await SharedPreferences.getInstance();
     return prefs.getString('firstName');
   }
+
   Future<String> last() async {
     prefs = await SharedPreferences.getInstance();
     return prefs.getString('lastName');
   }
+
   Future<bool> logout() async {
     prefs = await SharedPreferences.getInstance();
     return prefs.clear();
+  }
+
+  _launchURL() async {
+    const url = 'tel:+26876367641';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   logoutDialogue() {
@@ -134,7 +141,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    authProvider = Provider.of(context,listen: false);
+    authProvider = Provider.of(context, listen: false);
     //initial();
     return Scaffold(
       backgroundColor: whiteColor,
@@ -159,14 +166,14 @@ class _ProfileState extends State<Profile> {
                         borderRadius: BorderRadius.circular(23.0),
                         border: Border.all(width: 0.2, color: greyColor),
                         image: DecorationImage(
-                          image: AssetImage('assets/user/user_3.jpg'),
+                          image: AssetImage(''),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
                     widthSpace,
                     Text(
-                      '$username $lastname' ,
+                      '$username $lastname',
                       style: appBarTitleTextStyle,
                     ),
                   ],
@@ -227,8 +234,8 @@ class _ProfileState extends State<Profile> {
                   child:
                       listItem(primaryColor, Icons.person, 'Patient Directory'),
                 ),
-                heightSpace,
-                listItem(Colors.red, Icons.assignment, 'My History'),
+                // heightSpace,
+                // listItem(Colors.red, Icons.assignment, 'My History'),
               ],
             ),
           ),
@@ -244,8 +251,8 @@ class _ProfileState extends State<Profile> {
                   style: blackHeadingTextStyle,
                 ),
                 heightSpace,
-                heightSpace,
-                listItem(Colors.orange, Icons.local_offer, 'Coupon Codes'),
+                // heightSpace,
+                // listItem(Colors.orange, Icons.local_offer, 'Coupon Codes'),
                 heightSpace,
                 InkWell(
                   onTap: () {
@@ -256,12 +263,16 @@ class _ProfileState extends State<Profile> {
                             type: PageTransitionType.rightToLeft,
                             child: AboutUs()));
                   },
-                  child: listItem(primaryColor, Icons.touch_app, 'About Us'),
+                  child: listItem(primaryColor, Icons.help_outline, 'About Us'),
                 ),
                 heightSpace,
                 listItem(Colors.green, Icons.star_border, 'Rate Us'),
-                heightSpace,
-                listItem(Colors.red, Icons.help_outline, 'Help'),
+                InkWell(
+                  onTap: () {
+                    _launchURL();
+                  },
+                  child: listItem(Colors.red, Icons.touch_app, 'Call Us'),
+                ),
               ],
             ),
           ),

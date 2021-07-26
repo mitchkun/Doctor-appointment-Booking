@@ -1,22 +1,26 @@
 import 'package:lifespan/constant/constant.dart';
+import 'package:lifespan/pages/client/add_client.dart';
 import 'package:lifespan/pages/screens.dart';
+import 'package:lifespan/provider/Auth_Provider.dart';
 import 'package:lifespan/widget/column_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConsultationDetail extends StatefulWidget {
-  final String doctorName, doctorType, doctorImage, doctorExp, time, date;
+  final String name, doctorType, image, doctorExp, time, date;
   final double cost;
 
   const ConsultationDetail(
       {Key key,
-      @required this.doctorName,
+      @required this.name,
       @required this.doctorType,
-      @required this.doctorImage,
+      @required this.image,
       @required this.doctorExp,
       @required this.time,
       @required this.date,
-        @required this.cost})
+      @required this.cost})
       : super(key: key);
 
   @override
@@ -24,18 +28,42 @@ class ConsultationDetail extends StatefulWidget {
 }
 
 class _ConsultationDetailState extends State<ConsultationDetail> {
-  final patientList = [
-    {'name': 'Ntsiki','surname': 'Sikhondze' , 'image': 'assets/user/user_3.jpg'},
-    {'name': 'Siphamandla', 'surname': 'Msibi' ,'image': 'assets/user/user_2.jpg'}
-  ];
-  bool amazon = true,
+  Auth_Provider authProvider;
+  SharedPreferences prefs;
+  List<dynamic> patientList = [];
+  //BuildContext cont =
+
+  _ConsultationDetailState() {
+    getPatienList().then((val) => setState(() {
+          patientList = val;
+        }));
+  }
+
+  Future<List<dynamic>> getPatienList() async {
+    prefs = await SharedPreferences.getInstance();
+    return authProvider.getPatient(prefs.getString("oid"));
+  }
+
+  //   {
+  //     'name': 'Ntsiki',
+  //     'surname': 'Sikhondze',
+  //     'image': 'assets/user/user_3.jpg'
+  //   },
+  //   {
+  //     'name': 'Siphamandla',
+  //     'surname': 'Msibi',
+  //     'image': 'assets/user/user_2.jpg'
+  //   }
+  // ];
+  bool amazon = false,
       card = false,
       paypal = false,
       skrill = false,
-      cashOn = false;
-  String fname,lname;
+      cashOn = true;
+  String fname, lname;
   @override
   Widget build(BuildContext context) {
+    authProvider = Provider.of(context, listen: false);
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -72,15 +100,11 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                     duration: Duration(milliseconds: 600),
                     child: Payment(
                       cost: widget.cost,
-                        doctorName: widget.doctorName,
-                        time: widget.time,
+                      doctorName: widget.name,
+                      time: widget.time,
                       date: widget.date,
                       clientFirstname_str: fname,
                       clientLastname_str: lname,
-
-
-
-
                     )));
           },
           child: Container(
@@ -92,7 +116,7 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
               color: primaryColor,
             ),
             child: Text(
-              'Confirm & Pay',
+              'Confirm & Book',
               style: whiteColorButtonTextStyle,
             ),
           ),
@@ -119,7 +143,7 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Hero(
-                          tag: widget.doctorImage,
+                          tag: widget.image,
                           child: Container(
                             width: 76.0,
                             height: 76.0,
@@ -136,7 +160,7 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                                 ),
                               ],
                               image: DecorationImage(
-                                image: AssetImage(widget.doctorImage),
+                                image: AssetImage(widget.image),
                                 fit: BoxFit.fitHeight,
                               ),
                             ),
@@ -152,7 +176,7 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${widget.doctorName}',
+                                      '${widget.name}',
                                       style: blackNormalBoldTextStyle,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -168,10 +192,8 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                                                       milliseconds: 600),
                                                   type: PageTransitionType.fade,
                                                   child: DoctorProfile(
-                                                    doctorImage:
-                                                        widget.doctorImage,
-                                                    doctorName:
-                                                        widget.doctorName,
+                                                    doctorImage: widget.image,
+                                                    doctorName: widget.name,
                                                     doctorType:
                                                         widget.doctorType,
                                                     experience:
@@ -264,15 +286,16 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
           ),
           Expanded(
             child: ListView(
-
               children: [
-              Text(
-              'Appointment for?',
-              style: blackBigBoldTextStyle,
-                textAlign: TextAlign.justify,
-            ),
+                Text(
+                  'Appointment for?',
+                  style: blackBigBoldTextStyle,
+                  textAlign: TextAlign.justify,
+                ),
 
-                for (var i in patientList) getPaymentTile(i['name'] + ' ' + i['surname'] ,i['image'],i),
+                for (var i in patientList)
+                  getPaymentTile(i['firstName_str'], i['lastName_str'],
+                      'assets/user/sick.png', patientList.indexOf(i)),
                 //appointmentFor(),
                 //},
                 Container(height: fixPadding * 2.0),
@@ -289,9 +312,23 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                 color: primaryColor,
               ),
               widthSpace,
-              Text(
-                'Add Patient',
-                style: primaryColorNormalBoldTextStyle,
+              Wrap(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          PageTransition(
+                              duration: Duration(milliseconds: 600),
+                              type: PageTransitionType.fade,
+                              child: AddClient()));
+                    },
+                    child: Text(
+                      'Add Patient',
+                      style: primaryColorNormalBoldTextStyle,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -300,23 +337,45 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
     );
   }
 
-  getPaymentTile(String title, String imgPath, var i) {
+  getPaymentTile(String _fname, String _lname, String imgPath, var i) {
     return InkWell(
       onTap: () {
         //i.putIfAbsent('isSet', () => 'true');
-        if (title == 'Ntsiki Sikhondze') {
+        if (i == 0) {
           setState(() {
             cashOn = true;
             amazon = false;
-            fname ="Ntsiki";
-            lname = "Sikhondze";
+            skrill = false;
+            card = false;
+            fname = _fname;
+            lname = _lname;
           });
-        } else if (title == 'Siphamandla Msibi') {
+        } else if (i == 1) {
           setState(() {
             cashOn = false;
             amazon = true;
-            fname ="Siphamandla";
-            lname = "Msibi";
+            skrill = false;
+            card = false;
+            fname = _fname;
+            lname = _lname;
+          });
+        } else if (i == 2) {
+          setState(() {
+            cashOn = false;
+            amazon = false;
+            skrill = true;
+            card = false;
+            fname = _fname;
+            lname = _lname;
+          });
+        } else if (i == 3) {
+          setState(() {
+            cashOn = false;
+            amazon = false;
+            skrill = false;
+            card = true;
+            fname = _fname;
+            lname = _lname;
           });
         }
       },
@@ -330,11 +389,21 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
           borderRadius: BorderRadius.circular(7.0),
           border: Border.all(
             width: 1.0,
-            color:(title == 'Ntsiki Sikhondze')
-                ? (cashOn) ? primaryColor : Colors.grey[300]
-                : (title == 'Siphamandla Msibi')
-                ? (amazon) ? primaryColor : Colors.grey[300]
-                : (skrill) ? primaryColor : Colors.grey[300],
+            color: (i == 0)
+                ? (cashOn)
+                    ? primaryColor
+                    : Colors.grey[300]
+                : (i == 1)
+                    ? (amazon)
+                        ? primaryColor
+                        : Colors.grey[300]
+                    : (i == 2)
+                        ? (skrill)
+                            ? primaryColor
+                            : Colors.grey[300]
+                        : (card)
+                            ? primaryColor
+                            : Colors.grey[300],
           ),
           color: whiteColor,
         ),
@@ -349,10 +418,11 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                 Container(
                   width: 50.0,
                   child:
-                  Image.asset(imgPath, width: 50.0, fit: BoxFit.fitWidth),
+                      Image.asset(imgPath, width: 50.0, fit: BoxFit.fitWidth),
                 ),
                 widthSpace,
-                Text(title, style: primaryColorHeadingTextStyle),
+                Text(_fname + ' ' + _lname,
+                    style: primaryColorHeadingTextStyle),
               ],
             ),
             Container(
@@ -363,11 +433,21 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                 borderRadius: BorderRadius.circular(10.0),
                 border: Border.all(
                   width: 1.5,
-                  color: (title == 'Ntsiki Sikhondze')
-                      ? (cashOn) ? primaryColor : Colors.grey[300]
-                      : (title == 'Siphamandla Msibi')
-                      ? (amazon) ? primaryColor : Colors.grey[300]
-                      : (skrill) ? primaryColor : Colors.grey[300],
+                  color: (i == 0)
+                      ? (cashOn)
+                          ? primaryColor
+                          : Colors.grey[300]
+                      : (i == 1)
+                          ? (amazon)
+                              ? primaryColor
+                              : Colors.grey[300]
+                          : (i == 2)
+                              ? (skrill)
+                                  ? primaryColor
+                                  : Colors.grey[300]
+                              : (card)
+                                  ? primaryColor
+                                  : Colors.grey[300],
                 ),
               ),
               child: Container(
@@ -375,13 +455,22 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
                 height: 10.0,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  color: (title == 'Ntsiki Sikhondze')
-                      ? (cashOn) ? primaryColor : Colors.transparent
-                      : (title == 'Siphamandla Msibi')
-                      ? (amazon) ? primaryColor : Colors.transparent
-                      : (skrill) ? primaryColor : Colors.transparent,
-                ),
+                    borderRadius: BorderRadius.circular(5.0),
+                    color: (i == 0)
+                        ? (cashOn)
+                            ? primaryColor
+                            : Colors.transparent
+                        : (i == 1)
+                            ? (amazon)
+                                ? primaryColor
+                                : Colors.transparent
+                            : (i == 2)
+                                ? (skrill)
+                                    ? primaryColor
+                                    : Colors.transparent
+                                : (card)
+                                    ? primaryColor
+                                    : Colors.transparent),
               ),
             ),
           ],
