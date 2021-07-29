@@ -35,12 +35,17 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
 
   _ConsultationDetailState() {
     getPatienList().then((val) => setState(() {
-          patientList = val;
+          patientList += val;
         }));
   }
 
   Future<List<dynamic>> getPatienList() async {
     prefs = await SharedPreferences.getInstance();
+    dynamic object_user = {
+      'firstName_str': prefs.getString("firstName"),
+      'lastName_str': prefs.getString("lastName")
+    };
+    patientList.add(object_user);
     return authProvider.getPatient(prefs.getString("oid"));
   }
 
@@ -59,8 +64,128 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
       card = false,
       paypal = false,
       skrill = false,
-      cashOn = true;
+      cashOn = true,
+      self = false;
   String fname, lname;
+
+  successOrderDialog(
+      String systemBranchStr,
+      String appointDateDat,
+      String appointTimeTm,
+      String clientLastnameStr,
+      String clientFirstnameStr) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print(
+        "$systemBranchStr $appointDateDat $appointTimeTm $clientLastnameStr $clientFirstnameStr");
+    if (await authProvider.setAppointment(
+            systemBranchStr,
+            appointDateDat,
+            appointTimeTm,
+            clientLastnameStr,
+            clientFirstnameStr,
+            prefs.getString('oid')) ==
+        201) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return Dialog(
+            elevation: 0.0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            child: Container(
+              height: 170.0,
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    height: 70.0,
+                    width: 70.0,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(35.0),
+                      border: Border.all(color: primaryColor, width: 1.0),
+                    ),
+                    child: Icon(
+                      Icons.check,
+                      size: 40.0,
+                      color: primaryColor,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Text(
+                    "Success!",
+                    style: greySmallBoldTextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return Dialog(
+            elevation: 0.0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)),
+            child: Container(
+              height: 170.0,
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    height: 70.0,
+                    width: 70.0,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(35.0),
+                      border: Border.all(color: primaryColor, width: 1.0),
+                    ),
+                    child: Icon(
+                      Icons.announcement_outlined,
+                      size: 40.0,
+                      color: primaryColor,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Text(
+                    "Failed!",
+                    style: greySmallBoldTextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    Future.delayed(const Duration(milliseconds: 3000), () {
+      setState(() {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BottomBar()),
+        );
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     authProvider = Provider.of(context, listen: false);
@@ -93,19 +218,21 @@ class _ConsultationDetailState extends State<ConsultationDetail> {
         child: InkWell(
           borderRadius: BorderRadius.circular(15.0),
           onTap: () {
-            Navigator.push(
-                context,
-                PageTransition(
-                    type: PageTransitionType.rightToLeft,
-                    duration: Duration(milliseconds: 600),
-                    child: Payment(
-                      cost: widget.cost,
-                      doctorName: widget.name,
-                      time: widget.time,
-                      date: widget.date,
-                      clientFirstname_str: fname,
-                      clientLastname_str: lname,
-                    )));
+            successOrderDialog(
+                widget.name, widget.date, widget.time, fname, lname);
+            // Navigator.push(
+            //     context,
+            //     PageTransition(
+            //         type: PageTransitionType.rightToLeft,
+            //         duration: Duration(milliseconds: 600),
+            //         child: Payment(
+            //           cost: widget.cost,
+            //           doctorName: widget.name,
+            //           time: widget.time,
+            //           date: widget.date,
+            //           clientFirstname_str: fname,
+            //           clientLastname_str: lname,
+            //         )));
           },
           child: Container(
             width: double.infinity,

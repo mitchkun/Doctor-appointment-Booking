@@ -1,13 +1,21 @@
+import 'package:lifespan/model/user.dart';
 import 'package:lifespan/constant/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:lifespan/pages/screens.dart';
-import 'package:provider/provider.dart';
 import '../../provider/Auth_Provider.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
-class Register extends StatelessWidget {
-  String email, password, firstname, lastname;
+class Login extends StatelessWidget {
+  Login({key}) : super(key: key);
+  final FocusNode f1 = new FocusNode();
+  final FocusNode f2 = new FocusNode();
+  String email, password;
   Auth_Provider authProvider;
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -63,7 +71,7 @@ class Register extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(top: 20.0, left: 20.0),
                       child: Text(
-                        'Register',
+                        'Welcome to Lifespan Diagnostics',
                         style: loginBigTextStyle,
                       ),
                     ),
@@ -71,7 +79,7 @@ class Register extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: 20.0),
                       child: Text(
-                        'Create account',
+                        'Login',
                         style: whiteSmallLoginTextStyle,
                       ),
                     ),
@@ -84,52 +92,7 @@ class Register extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(20.0)),
                         ),
                         child: TextField(
-                          style: inputLoginTextStyle,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(left: 20.0),
-                            hintText: 'First Name',
-                            hintStyle: inputLoginTextStyle,
-                            border: InputBorder.none,
-                          ),
-                          keyboardType: TextInputType.text,
-                          onChanged: (val) {
-                            firstname = val;
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0, left: 20.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200].withOpacity(0.3),
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        ),
-                        child: TextField(
-                          style: inputLoginTextStyle,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(left: 20.0),
-                            hintText: 'Last Name',
-                            hintStyle: inputLoginTextStyle,
-                            border: InputBorder.none,
-                          ),
-                          keyboardType: TextInputType.text,
-                          onChanged: (val) {
-                            lastname = val;
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0, left: 20.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200].withOpacity(0.3),
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        ),
-                        child: TextField(
+                          focusNode: f1,
                           style: inputLoginTextStyle,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(left: 20.0),
@@ -153,31 +116,12 @@ class Register extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(20.0)),
                         ),
                         child: TextField(
+                          focusNode: f2,
                           style: inputLoginTextStyle,
                           obscureText: true,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(left: 20.0),
                             hintText: 'Password',
-                            hintStyle: inputLoginTextStyle,
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0, left: 20.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200].withOpacity(0.3),
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        ),
-                        child: TextField(
-                          style: inputLoginTextStyle,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(left: 20.0),
-                            hintText: 'Confirm Password',
                             hintStyle: inputLoginTextStyle,
                             border: InputBorder.none,
                           ),
@@ -194,31 +138,40 @@ class Register extends StatelessWidget {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(30.0),
                         onTap: () async {
-                          if (await authProvider.signupUser(
-                                  email, password, firstname, lastname) ==
-                              201) {
+                          if (await authProvider.signinUser(email, password) ==
+                              200) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Check Email for verification"),
+                              content: Text("Logged In"),
                             ));
                             Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Login()),
-                            );
-                          } else if (await authProvider.signupUser(
-                                  email, password, firstname, lastname) ==
+                                context,
+                                PageTransition(
+                                    duration: Duration(milliseconds: 600),
+                                    type: PageTransitionType.fade,
+                                    child: BottomBar()));
+                          } else if (await authProvider.signinUser(
+                                  email, password) ==
                               404) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Missing Details"),
+                              content: Text("Incorrect Credentials"),
                             ));
-                          } else if (await authProvider.signupUser(
-                                  email, password, firstname, lastname) ==
+                          } else if (await authProvider.signinUser(
+                                  email, password) ==
                               500) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Server Error"),
+                              content: Text("User not Found"),
                             ));
-                          } else {
+                          } else if (await authProvider.signinUser(
+                                  email, password) ==
+                              422) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Network Error"),
+                              content: Text("Parameters not supplied"),
+                            ));
+                          } else if (await authProvider.signinUser(
+                                  email, password) ==
+                              211) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Verify Your email Address"),
                             ));
                           }
                         },
@@ -240,7 +193,7 @@ class Register extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Register',
+                            'Login',
                             style: inputLoginTextStyle,
                           ),
                         ),
@@ -255,7 +208,7 @@ class Register extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              "Already have an account?",
+                              "Don't have an account?",
                               style: inputLoginTextStyle,
                             ),
                             TextButton(
@@ -266,11 +219,11 @@ class Register extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Login()),
+                                      builder: (context) => Register()),
                                 );
                               },
                               child: Text(
-                                'Login here',
+                                'Signup here',
                                 style: inputLoginTextStyle,
                               ),
                             ),

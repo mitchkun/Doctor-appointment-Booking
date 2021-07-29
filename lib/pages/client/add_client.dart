@@ -25,6 +25,15 @@ class _AddClientState extends State<AddClient> {
       postal,
       status;
   Auth_Provider authProvider;
+  Future<DateTime> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(), // Refer step 1
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    return picked;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,29 +86,29 @@ class _AddClientState extends State<AddClient> {
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-            Padding(
-              padding: EdgeInsets.only(right: 20.0, left: 20.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200].withOpacity(0.3),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                child: TextField(
-                  style: inputLoginTextStyle,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 20.0),
-                    hintText: 'Other Name',
-                    hintStyle: inputLoginTextStyle,
-                    border: InputBorder.none,
-                  ),
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {
-                    othername = val;
-                  },
-                ),
-              ),
-            ),
+            // SizedBox(height: 20.0),
+            // Padding(
+            //   padding: EdgeInsets.only(right: 20.0, left: 20.0),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: Colors.grey[200].withOpacity(0.3),
+            //       borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            //     ),
+            //     child: TextField(
+            //       style: inputLoginTextStyle,
+            //       decoration: InputDecoration(
+            //         contentPadding: EdgeInsets.only(left: 20.0),
+            //         hintText: 'Other Name',
+            //         hintStyle: inputLoginTextStyle,
+            //         border: InputBorder.none,
+            //       ),
+            //       keyboardType: TextInputType.text,
+            //       onChanged: (val) {
+            //         othername = val;
+            //       },
+            //     ),
+            //   ),
+            // ),
             SizedBox(height: 20.0),
             Padding(
               padding: EdgeInsets.only(right: 20.0, left: 20.0),
@@ -208,7 +217,7 @@ class _AddClientState extends State<AddClient> {
                     hintStyle: inputLoginTextStyle,
                     border: InputBorder.none,
                   ),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.text,
                   onChanged: (val) {
                     passport = val;
                   },
@@ -223,18 +232,12 @@ class _AddClientState extends State<AddClient> {
                   color: Colors.grey[200].withOpacity(0.3),
                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
                 ),
-                child: TextField(
-                  style: inputLoginTextStyle,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 20.0),
-                    hintText: 'Birth Date',
-                    hintStyle: inputLoginTextStyle,
-                    border: InputBorder.none,
-                  ),
-                  keyboardType: TextInputType.datetime,
-                  onChanged: (val) {
-                    birthdate = val;
-                  },
+                child: InputDatePickerFormField(
+                  initialDate: DateTime.now(), firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                  // onChanged: (val) {
+                  //   birthdate = val;
+                  // },
                 ),
               ),
             ),
@@ -284,52 +287,52 @@ class _AddClientState extends State<AddClient> {
                 ),
               ),
             ),
-            SizedBox(height: 20.0),
-            Padding(
-              padding: EdgeInsets.only(right: 20.0, left: 20.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200].withOpacity(0.3),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                child: TextField(
-                  style: inputLoginTextStyle,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 20.0),
-                    hintText: 'Postal Address',
-                    hintStyle: inputLoginTextStyle,
-                    border: InputBorder.none,
-                  ),
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {
-                    postal = val;
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: 20.0),
-            Padding(
-              padding: EdgeInsets.only(right: 20.0, left: 20.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[200].withOpacity(0.3),
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                ),
-                child: TextField(
-                  style: inputLoginTextStyle,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 20.0),
-                    hintText: 'Marital Status',
-                    hintStyle: inputLoginTextStyle,
-                    border: InputBorder.none,
-                  ),
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {
-                    status = val;
-                  },
-                ),
-              ),
-            ),
+            // SizedBox(height: 20.0),
+            // Padding(
+            //   padding: EdgeInsets.only(right: 20.0, left: 20.0),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: Colors.grey[200].withOpacity(0.3),
+            //       borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            //     ),
+            //     child: TextField(
+            //       style: inputLoginTextStyle,
+            //       decoration: InputDecoration(
+            //         contentPadding: EdgeInsets.only(left: 20.0),
+            //         hintText: 'Postal Address',
+            //         hintStyle: inputLoginTextStyle,
+            //         border: InputBorder.none,
+            //       ),
+            //       keyboardType: TextInputType.text,
+            //       onChanged: (val) {
+            //         postal = val;
+            //       },
+            //     ),
+            //   ),
+            // ),
+            // SizedBox(height: 20.0),
+            // Padding(
+            //   padding: EdgeInsets.only(right: 20.0, left: 20.0),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: Colors.grey[200].withOpacity(0.3),
+            //       borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            //     ),
+            //     child: TextField(
+            //       style: inputLoginTextStyle,
+            //       decoration: InputDecoration(
+            //         contentPadding: EdgeInsets.only(left: 20.0),
+            //         hintText: 'Marital Status',
+            //         hintStyle: inputLoginTextStyle,
+            //         border: InputBorder.none,
+            //       ),
+            //       keyboardType: TextInputType.text,
+            //       onChanged: (val) {
+            //         status = val;
+            //       },
+            //     ),
+            //   ),
+            // ),
             SizedBox(height: 40.0),
             Padding(
               padding: EdgeInsets.only(right: 20.0, left: 20.0),
@@ -342,15 +345,15 @@ class _AddClientState extends State<AddClient> {
                           email,
                           firstname,
                           lastname,
-                          othername,
+                          //othername,
                           phone,
                           nationalid,
                           passport,
                           birthdate,
                           gender,
                           physical,
-                          postal,
-                          status,
+                          //postal,
+                          //status,
                           prefs.getString('firstName') +
                               ", " +
                               prefs.getString('lastName'),
@@ -369,15 +372,15 @@ class _AddClientState extends State<AddClient> {
                           email,
                           firstname,
                           lastname,
-                          othername,
+                          //othername,
                           phone,
                           nationalid,
                           passport,
                           birthdate,
                           gender,
                           physical,
-                          postal,
-                          status,
+                          //postal,
+                          //status,
                           prefs.getString('firstName') +
                               ", " +
                               prefs.getString('lastName'),
@@ -390,15 +393,15 @@ class _AddClientState extends State<AddClient> {
                           email,
                           firstname,
                           lastname,
-                          othername,
+                          //othername,
                           phone,
                           nationalid,
                           passport,
                           birthdate,
                           gender,
                           physical,
-                          postal,
-                          status,
+                          //postal,
+                          //status,
                           prefs.getString('firstName') +
                               ", " +
                               prefs.getString('lastName'),

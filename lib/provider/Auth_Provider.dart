@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:lifespan/model/user.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth_Provider with ChangeNotifier {
   String id;
   String email;
   String password;
-  static const url = "http://173.212.233.244:6000";
+  static const url = "http://173.212.233.244:3000";
 
   String get getUserId => id;
 
@@ -95,6 +96,7 @@ class Auth_Provider with ChangeNotifier {
   }
 
   Future<int> signinUser(String email, String password) async {
+    LoadingDoubleFlipping.circle();
     final response = await http.post(Uri.parse(url + "/user/signin"), headers: {
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     }, body: {
@@ -115,7 +117,7 @@ class Auth_Provider with ChangeNotifier {
   }
 
   Future<List<dynamic>> getPastAppointment(String postedByGUID) async {
-    List<dynamic> appointlist;
+    List<dynamic> appointlist = [];
     final response =
         await http.post(Uri.parse(url + "/user/pastappointments"), headers: {
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -156,7 +158,7 @@ class Auth_Provider with ChangeNotifier {
   }
 
   Future<List<dynamic>> getAppointment(String postedByGUID) async {
-    List<dynamic> appointlist;
+    List<dynamic> appointlist = [];
     final response =
         await http.post(Uri.parse(url + "/user/appointments"), headers: {
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -173,7 +175,7 @@ class Auth_Provider with ChangeNotifier {
   }
 
   Future<List<dynamic>> getCancelledAppointment(String postedByGUID) async {
-    List<dynamic> appointlist;
+    List<dynamic> appointlist = [];
     final response = await http
         .post(Uri.parse(url + "/user/cancelledappointments"), headers: {
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -216,15 +218,15 @@ class Auth_Provider with ChangeNotifier {
       String email,
       String firstname,
       String lastname,
-      String othername,
+      //String othername,
       String phone,
       String nationalid,
       String passport,
       String birthdate,
       String gender,
       String physical,
-      String postal,
-      String status,
+      //String postal,
+      //String status,
       String addedUser,
       String postedByGUID) async {
     final response =
@@ -232,7 +234,7 @@ class Auth_Provider with ChangeNotifier {
       "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     }, body: {
       'email_str': email,
-      'otherName_str': othername,
+      //'otherName_str': othername,
       'firstName_str': firstname,
       'lastName_str': lastname,
       'nationalIdNumber_str': nationalid,
@@ -240,9 +242,9 @@ class Auth_Provider with ChangeNotifier {
       'phoneNumber_str': phone,
       'birthDate_dat': birthdate,
       'gender_str': gender,
-      'maritalStatus_str': status,
+      //'maritalStatus_str': status,
       'addressResidential_str': physical,
-      'addressPostal_str': postal,
+      //'addressPostal_str': postal,
       'addedUser_str': addedUser,
       'postedby_GUID': postedByGUID
     });

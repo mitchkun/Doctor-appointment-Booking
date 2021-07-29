@@ -309,7 +309,7 @@ class _DoctorTimeSlotState extends State<DoctorTimeSlot> {
                               ),
                               SizedBox(height: 7.0),
                               Text(
-                                '\E$cost',
+                                '',
                                 style: blackHeadingTextStyle,
                               ),
                             ],

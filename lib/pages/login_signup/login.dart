@@ -1,255 +1,124 @@
-import 'package:lifespan/model/user.dart';
-import 'package:lifespan/constant/constant.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:lifespan/pages/screens.dart';
-import '../../provider/Auth_Provider.dart';
-import 'dart:convert';
+import 'styles.dart';
+import 'loginAnimation.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/animation.dart';
 import 'dart:async';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
+import '../../Components/SignUpLink.dart';
+import '../../Components/Form.dart';
+import '../../Components/SignInButton.dart';
+import '../../Components/WhiteTick.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/scheduler.dart' show timeDilation;
 
+class Login extends StatefulWidget {
+  const Login({Key key}) : super(key: key);
+  @override
+  LoginScreenState createState() => new LoginScreenState();
+}
 
-class Login extends StatelessWidget {
-  Login({key}) : super(key: key);
-  final FocusNode f1 = new FocusNode();
-  final FocusNode f2 = new FocusNode();
-  String email, password;
-  Auth_Provider authProvider;
+class LoginScreenState extends State<Login> with TickerProviderStateMixin {
+  AnimationController _loginButtonController;
+  var animationStatus = 0;
+  @override
+  void initState() {
+    super.initState();
+    _loginButtonController = new AnimationController(
+        duration: new Duration(milliseconds: 3000), vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _loginButtonController.dispose();
+    super.dispose();
+  }
+
+  Future<Null> _playAnimation() async {
+    try {
+      await _loginButtonController.forward();
+      //await _loginButtonController.reverse();
+    } on TickerCanceled {}
+  }
+
+  Future<bool> _onWillPop() {
+    return showDialog(
+          context: context,
+          builder: (context) {
+            return new AlertDialog(
+              title: new Text('Are you sure?'),
+              actions: <Widget>[
+                new TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: new Text('No'),
+                ),
+                new TextButton(
+                  onPressed: () =>
+                      Navigator.pushReplacementNamed(context, "/home"),
+                  child: new Text('Yes'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    authProvider = Provider.of(context,listen: false);
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage('assets/doctor_bg.jpg'), fit: BoxFit.cover),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 0.0,
-            left: 0.0,
-            child: Container(
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [0.1, 0.3, 0.5, 0.7, 0.9],
-                  colors: [
-                    Colors.black.withOpacity(0.4),
-                    Colors.black.withOpacity(0.55),
-                    Colors.black.withOpacity(0.7),
-                    Colors.black.withOpacity(0.8),
-                    Colors.black.withOpacity(1.0),
-                  ],
-                ),
+    timeDilation = 0.4;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    return (new WillPopScope(
+        onWillPop: _onWillPop,
+        child: new Scaffold(
+          body: new Container(
+              decoration: new BoxDecoration(
+                image: backgroundImage,
               ),
-            ),
-          ),
-          Positioned(
-            child: WillPopScope(
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0.0,
-                  leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Login()));
-                    },
-                  ),
-                ),
-                body: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 20.0, left: 20.0),
-                      child: Text(
-                        'Welcome to Lifespan Diagnostics',
-                        style: loginBigTextStyle,
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                    Padding(
-                      padding: EdgeInsets.only(left: 20.0),
-                      child: Text(
-                        'Login',
-                        style: whiteSmallLoginTextStyle,
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0, left: 20.0),
-                      child: Container(
-
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200].withOpacity(0.3),
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        ),
-                        child: TextField(
-                          focusNode: f1,
-                          style: inputLoginTextStyle,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(left: 20.0),
-                            hintText: 'Email',
-                            hintStyle: inputLoginTextStyle,
-                            border: InputBorder.none,
+              child: new Container(
+                  decoration: new BoxDecoration(
+                      gradient: new LinearGradient(
+                    colors: <Color>[
+                      const Color.fromRGBO(162, 146, 199, 0.8),
+                      const Color.fromRGBO(51, 51, 63, 0.9),
+                    ],
+                    stops: [0.2, 1.0],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(0.0, 1.0),
+                  )),
+                  child: new ListView(
+                    padding: const EdgeInsets.all(0.0),
+                    children: <Widget>[
+                      new Stack(
+                        alignment: AlignmentDirectional.bottomCenter,
+                        children: <Widget>[
+                          new Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              SizedBox(height: 100),
+                              new Tick(image: tick),
+                              new FormContainer(),
+                              new SignUp()
+                            ],
                           ),
-                            keyboardType: TextInputType.emailAddress,
-                            onChanged: (val){
-                              email = val;
-                            },
-
-                        ),
-
+                          animationStatus == 0
+                              ? new Padding(
+                                  padding: const EdgeInsets.only(bottom: 50.0),
+                                  child: new InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          animationStatus = 1;
+                                        });
+                                        _playAnimation();
+                                      },
+                                      child: new SignIn()),
+                                )
+                              : new StaggerAnimation(
+                                  buttonController:
+                                      _loginButtonController.view),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0, left: 20.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200].withOpacity(0.3),
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        ),
-                        child: TextField(
-                          focusNode: f2,
-                          style: inputLoginTextStyle,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(left: 20.0),
-                            hintText: 'Password',
-                            hintStyle: inputLoginTextStyle,
-                            border: InputBorder.none,
-                          ),
-                          keyboardType: TextInputType.text,
-                          onChanged: (val){
-                            password = val;
-                          },
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 40.0),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0, left: 20.0),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(30.0),
-                        onTap: () async {
-                          if(await authProvider.signinUser(email, password) ==200) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Logged In"),
-                            ));
-                            Navigator.push(
-                                context,
-                                PageTransition(
-                                    duration: Duration(milliseconds: 600),
-                                    type: PageTransitionType.fade,
-                                    child: BottomBar()));
-                          }
-                          else if(await authProvider.signinUser(email, password) ==404){
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Password Incorrect"),
-                            ));
-                          }
-                          else if(await authProvider.signinUser(email, password) ==500){
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("User not Found"),
-                            ));
-                          }
-                          else if(await authProvider.signinUser(email, password) ==422){
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Parameters not supplied"),
-                            ));
-                          }
-                          else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text("Network Error, try again"),
-                            ));
-                          }
-                        },
-                        child: Container(
-                          height: 50.0,
-                          width: double.infinity,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.bottomRight,
-                              stops: [0.1, 0.5, 0.9],
-                              colors: [
-                                Colors.blue[300].withOpacity(0.8),
-                                Colors.blue[500].withOpacity(0.8),
-                                Colors.blue[800].withOpacity(0.8),
-                              ],
-                            ),
-                          ),
-                          child: Text(
-                            'Login',
-                            style: inputLoginTextStyle,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 18.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Don't have an account?",
-                              style: inputLoginTextStyle,
-                            ),
-                            TextButton(
-                              style: ButtonStyle(
-                                  overlayColor:
-                                  MaterialStateProperty.all(Colors.transparent)),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => Register()),
-                                );
-                              },
-                              child: Text(
-                                'Signup here',
-                                style: inputLoginTextStyle,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                  ],
-                ),
-              ),
-              onWillPop: () async {
-                bool backStatus = onWillPop();
-                if (backStatus) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Home()));
-                }
-                return false;
-              },
-            ),
-          ),
-        ],
-      ),
-    );
+                    ],
+                  ))),
+        )));
   }
-
-  onWillPop() {
-    return true;
-  }
-
 }
