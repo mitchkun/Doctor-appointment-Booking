@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:lifespan/pages/home/home.dart';
 import 'package:lifespan/pages/login_signup/login.dart';
+import 'package:lifespan/pages/screens.dart';
 
 class Routes {
   Routes() {
     runApp(new MaterialApp(
       title: "Dribbble Animation App",
       debugShowCheckedModeBanner: false,
-      home: new Login(),
+      home: new SplashScreen(),
       // ignore: missing_return
       onGenerateRoute: (RouteSettings settings) {
         switch (settings.name) {

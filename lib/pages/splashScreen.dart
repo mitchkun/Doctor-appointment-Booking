@@ -17,19 +17,19 @@ class _SplashScreenState extends State<SplashScreen>
   SharedPreferences prefs;
   bool loggedStatus = false;
 
-  _SplashScreenState(){
-  initial().then((val) => setState(() {
-  loggedStatus = val;
-  }));}
+  _SplashScreenState() {
+    initial().then((val) => setState(() {
+          loggedStatus = val;
+        }));
+  }
 
   Future<bool> initial() async {
     prefs = await SharedPreferences.getInstance();
-    if(prefs.getBool('loggedIn')) {
+    if (prefs.getBool('loggedIn')) {
       loggedStatus = prefs.getBool('loggedIn');
       return prefs.getBool('loggedIn');
-    }
-    else return false;
-
+    } else
+      return false;
   }
 
   @override
@@ -47,33 +47,20 @@ class _SplashScreenState extends State<SplashScreen>
       parent: _controller,
       curve: Curves.elasticIn,
     ));
-Timer(
-  Duration(seconds: 1), () =>
-
-launch()
-    );
+    Timer(Duration(seconds: 1), () => launch());
   }
 
-  launch(){
+  launch() {
     if (loggedStatus) {
       Timer(
           Duration(seconds: 3),
-              () =>
-              Navigator.push(
-
-                  context, MaterialPageRoute(builder: (context) => BottomBar())
-
-              ));
-    }
-    else {
+          () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => BottomBar())));
+    } else {
       Timer(
           Duration(seconds: 3),
-              () =>
-              Navigator.push(
-
-                  context, MaterialPageRoute(builder: (context) => Login())
-
-              ));
+          () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Login())));
     }
   }
 
